@@ -7,6 +7,7 @@ class Audit {
       return SimpleClonerTask.retrieveAndValidateFile(submission_value);
     } catch (e) {
       console.log('Error in validate:', e);
+      console.log('Error in validate:', e);
       return false;
     }
   }
