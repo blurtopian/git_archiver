@@ -1,8 +1,8 @@
 # Name and metadata of your task
-task_name: 'CLink Git Archiver'
+task_name: 'Git Archiver'
 author: 'East'
 description: 'A simple git task that gets the latest commit hash from a specific repo and uploads the hash to IPFS for later retrieval.'
-repositoryUrl: 'https://github.com/blurtopian/clink' #replace with your own repo url
+repositoryUrl: 'https://github.com/blurtopian/git_archiver' #replace with your own repo url
 imageUrl: 'https://i.ibb.co/rct9M08/output.png'
 # network value can be DEVELOPMENT , ARWEAVE or IPFS, Recommended IPFS when deploying to testnet as the cli automatically takes care of uploading the executable with the help of web3.js key
 task_executable_network: 'IPFS'
