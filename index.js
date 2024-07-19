@@ -12,14 +12,14 @@ if (app) {
   // Sample API that return your task state
   app.get('/taskState', async (req, res) => {
     const state = await namespaceWrapper.getTaskState();
-    console.log('TASK STATE', state);
+    console.log('TASK STATE HERE', state);
     res.status(200).json({ taskState: state });
   });
 
   // Sample API that return the value stored in NeDB
   app.get('/value', async (req, res) => {
     const value = await namespaceWrapper.storeGet('value');
-    console.log('value', value);
+    console.log('value HERE', value);
     res.status(200).json({ value: value });
   });
 }
