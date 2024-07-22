@@ -37,9 +37,9 @@ class Submission {
   }
 
   async storeFile(data, filename = 'dealsData.json') {
+    const basePath = await namespaceWrapper.getBasePath();
     try {
       const client = new KoiiStorageClient();
-      const basePath = await namespaceWrapper.getBasePath();
       fs.writeFileSync(`${basePath}/${filename}`, JSON.stringify(data));
 
       const userStaking = await namespaceWrapper.getSubmitterAccount();
