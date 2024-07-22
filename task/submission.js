@@ -1,7 +1,7 @@
 const { namespaceWrapper } = require('@_koii/namespace-wrapper');
 const { KoiiStorageClient } = require('@_koii/storage-task-sdk');
 const { SimpleClonerTask } = require('../cloner/SimpleClonerTask');
-const simpleGit = require('simple-git');
+const { searchRandomRepo } = require('./github');
 const fs = require('fs');
 
 class Submission {
@@ -10,14 +10,13 @@ class Submission {
   async task(round) {
     try {
       console.log('task called with round', round);
-      const newTask = new SimpleClonerTask('https://github.com/blurtopian/clink_test.git');
-      console.log('newTask', newTask);
+      const randomRepo = await searchRandomRepo();
+      console.log('randomRepo.clone_url', randomRepo.clone_url)
+      const gitTask = new SimpleClonerTask(randomRepo);
+      console.log('gitTask', gitTask);
 
-      const latestCommit = await newTask.getLatestCommit();
-      console.log('latestCommit', latestCommit)
+      await gitTask.clone();
 
-      const cid = await this.storeFile(latestCommit);
-      await namespaceWrapper.storeSet("cid", cid);
       return 'Done';
     } catch (err) {
       console.error('ERROR IN EXECUTING TASK', err);

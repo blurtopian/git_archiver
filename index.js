@@ -1,5 +1,6 @@
 const { coreLogic } = require('./coreLogic');
 const { searchRandomRepo } = require('./task/github');
+const { submission } = require('./task/submission');
 const {
   namespaceWrapper,
   taskNodeAdministered,
@@ -28,6 +29,12 @@ if (app) {
   app.get('/github', async (req, res) => {
     await searchRandomRepo();
     res.status(200).json({ data: 'none' });
+  });
+
+  // Sample API that return the value stored in NeDB
+  app.get('/task', async (req, res) => {
+    let result = await submission.task(0);
+    res.status(200).json({ result });
   });
 }
 

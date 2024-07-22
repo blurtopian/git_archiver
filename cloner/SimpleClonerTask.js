@@ -1,13 +1,40 @@
 const { KoiiStorageClient } = require('@_koii/storage-task-sdk');
+const { namespaceWrapper } = require('@_koii/namespace-wrapper');
+const fs = require('fs');
 const simpleGit = require('simple-git');
 const git = simpleGit();
 
 
 class SimpleClonerTask {
-  repo;
   constructor(repo) {
     this.repo = repo;
-    console.log('this.repo', this.repo)
+  }
+
+  async clone() {
+    // Create a new instance of the Koii Storage Client
+    const client = new KoiiStorageClient();
+    const basePath = await namespaceWrapper.getBasePath();
+    const repoName = this.repo.name;
+    const cloneDir = `${basePath}/${repoName}`;
+    const cloneUrl = this.repo.clone_url;
+
+    try {
+      if (!fs.existsSync(cloneDir)) {
+        await git.clone(cloneUrl, cloneDir);
+        console.log('Repository cloned successfully.');
+      } else {
+          console.log('Directory already exists. Skipping clone.');
+      }
+
+      // Clone the repository to a temporary directory (or just use a local repo)
+      await git.clone(this.remoteUrl, 'temp-repo');
+      return 'Clone Done!';
+    } catch (error) {
+      console.error('Error fetching latest commit:', error);
+    } finally {
+      // Clean up: remove the temporary directory if needed
+      // (Implement cleanup logic here if desired)
+    }
   }
 
   async getLatestCommit() {
