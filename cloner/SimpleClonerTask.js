@@ -7,21 +7,7 @@ class SimpleClonerTask {
   repo;
   constructor(repo) {
     this.repo = repo;
-  }
-
-  async retrieveAndValidateFile(cid, filename = 'dealsData.json') {
-    // instantiate the storage client
-    const client = new KoiiStorageClient();
-
-    try {
-      // get the uploaded file using the IPFS CID we stored earlier and the filename (in this case, `dealsData.json`)
-      const upload = await client.getFile(cid, filename);
-      // return whether or not the file exists
-      return !!upload;
-    } catch (error) {
-      console.error('Failed to download or validate file from IPFS:', error);
-      throw error;
-    }
+    console.log('this.repo', this.repo)
   }
 
   async getLatestCommit() {
@@ -45,7 +31,22 @@ class SimpleClonerTask {
   }
 }
 
-const simpleCloner = new SimpleClonerTask();
+async function retrieveAndValidateFile(cid, filename = 'dealsData.json') {
+  // instantiate the storage client
+  const client = new KoiiStorageClient();
+
+  try {
+    // get the uploaded file using the IPFS CID we stored earlier and the filename (in this case, `dealsData.json`)
+    const upload = await client.getFile(cid, filename);
+    // return whether or not the file exists
+    return !!upload;
+  } catch (error) {
+    console.error('Failed to download or validate file from IPFS:', error);
+    throw error;
+  }
+}
+
 module.exports = {
-  simpleCloner
+  SimpleClonerTask,
+  retrieveAndValidateFile,
 };
