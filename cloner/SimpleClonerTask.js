@@ -1,9 +1,9 @@
 const { KoiiStorageClient } = require('@_koii/storage-task-sdk');
 const { namespaceWrapper } = require('@_koii/namespace-wrapper');
 const fs = require('fs');
+const archiver = require('archiver');
 const simpleGit = require('simple-git');
 const git = simpleGit();
-
 
 class SimpleClonerTask {
   constructor(repo) {
@@ -23,7 +23,7 @@ class SimpleClonerTask {
         await git.clone(cloneUrl, cloneDir);
         console.log('Repository cloned successfully.');
       } else {
-          console.log('Directory already exists. Skipping clone.');
+        console.log('Directory already exists. Skipping clone.');
       }
       return 'Clone Done!';
     } catch (error) {
@@ -32,6 +32,45 @@ class SimpleClonerTask {
       // Clean up: remove the temporary directory if needed
       // (Implement cleanup logic here if desired)
     }
+  }
+
+  async zipRepo() {
+    const basePath = await namespaceWrapper.getBasePath();
+    const repoName = this.repo.name;
+    const cloneDir = `${basePath}/${repoName}`;
+    const zipPath = `${cloneDir}.zip`;
+
+    console.log(`Zipping the repository into ${zipPath}`);
+    const output = fs.createWriteStream(zipPath);
+    const archive = archiver('zip', {
+      zlib: { level: 9 }, // Sets the compression level
+    });
+
+    output.on('close', () => {
+      console.log(
+        `Repository zipped successfully. Total bytes: ${archive.pointer()}`,
+      );
+    });
+
+    output.on('end', () => {
+      console.log('Data has been drained');
+    });
+
+    archive.on('warning', err => {
+      if (err.code !== 'ENOENT') {
+        throw err;
+      }
+    });
+
+    archive.on('error', err => {
+      throw err;
+    });
+
+    archive.pipe(output);
+
+    archive.directory(cloneDir, false);
+
+    archive.finalize();
   }
 
   async getLatestCommit() {
@@ -45,7 +84,7 @@ class SimpleClonerTask {
       // Get the latest commit
       const log = await git.log({ maxCount: 1 });
       console.log('Latest Commit:', log.latest);
-      return log.latest
+      return log.latest;
     } catch (error) {
       console.error('Error fetching latest commit:', error);
     } finally {

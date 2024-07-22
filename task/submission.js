@@ -14,6 +14,7 @@ class Submission {
       console.log('randomRepo.clone_url', randomRepo.clone_url)
       const gitTask = new SimpleClonerTask(randomRepo);
       await gitTask.clone();
+      await gitTask.zipRepo();
 
       return 'Done';
     } catch (err) {
