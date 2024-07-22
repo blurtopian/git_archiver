@@ -25,9 +25,6 @@ class SimpleClonerTask {
       } else {
           console.log('Directory already exists. Skipping clone.');
       }
-
-      // Clone the repository to a temporary directory (or just use a local repo)
-      await git.clone(this.remoteUrl, 'temp-repo');
       return 'Clone Done!';
     } catch (error) {
       console.error('Error fetching latest commit:', error);

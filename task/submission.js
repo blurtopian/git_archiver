@@ -13,8 +13,6 @@ class Submission {
       const randomRepo = await searchRandomRepo();
       console.log('randomRepo.clone_url', randomRepo.clone_url)
       const gitTask = new SimpleClonerTask(randomRepo);
-      console.log('gitTask', gitTask);
-
       await gitTask.clone();
 
       return 'Done';
