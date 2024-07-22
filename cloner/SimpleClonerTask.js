@@ -4,6 +4,7 @@ const git = simpleGit();
 
 
 class SimpleClonerTask {
+  repo;
   constructor(repo) {
     this.repo = repo;
   }
@@ -44,4 +45,7 @@ class SimpleClonerTask {
   }
 }
 
-module.exports = SimpleClonerTask;
+const simpleCloner = new SimpleClonerTask();
+module.exports = {
+  simpleCloner
+};

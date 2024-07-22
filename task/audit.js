@@ -1,10 +1,10 @@
 const { namespaceWrapper } = require('@_koii/namespace-wrapper');
-const SimpleClonerTask = require('../cloner/SimpleClonerTask');
+const { retrieveAndValidateFile } = require('../cloner/SimpleClonerTask');
 
 class Audit {
   async validateNode(submission_value, round) {
     try {
-      return SimpleClonerTask.retrieveAndValidateFile(submission_value);
+      return retrieveAndValidateFile(submission_value);
     } catch (e) {
       console.log('Error in validate:', e);
       console.log('Error in validate:', e);
