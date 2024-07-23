@@ -72,8 +72,6 @@ class GitTask {
           console.log(`Directory ${cloneDir} deleted successfully.`);
         }
       });
-
-      return cid;
     } catch (error) {
       console.error('Failed to delete file/directory:', error);
       throw error;
