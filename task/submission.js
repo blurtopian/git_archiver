@@ -1,6 +1,6 @@
 const { namespaceWrapper } = require('@_koii/namespace-wrapper');
 const { KoiiStorageClient } = require('@_koii/storage-task-sdk');
-const { SimpleClonerTask } = require('../cloner/SimpleClonerTask');
+const { gitTask } = require('./GitTask');
 const { searchRandomRepo } = require('./github');
 const fs = require('fs');
 
@@ -12,10 +12,13 @@ class Submission {
       console.log('task called with round', round);
       const randomRepo = await searchRandomRepo();
       console.log('randomRepo.clone_url', randomRepo.clone_url)
-      const gitTask = new SimpleClonerTask(randomRepo);
+      gitTask.setRepo(randomRepo);
       await gitTask.clone();
       await gitTask.zipRepo();
+      const cid = await gitTask.storeFile();
+      await gitTask.cleanup();
 
+      await namespaceWrapper.storeSet('cid', cid);
       return 'Done';
     } catch (err) {
       console.error('ERROR IN EXECUTING TASK', err);
@@ -36,26 +39,6 @@ class Submission {
       console.log('after the submission call');
     } catch (error) {
       console.log('error in submission', error);
-    }
-  }
-
-  async storeFile(data, filename = 'dealsData.json') {
-    const basePath = await namespaceWrapper.getBasePath();
-    try {
-      const client = new KoiiStorageClient();
-      fs.writeFileSync(`${basePath}/${filename}`, JSON.stringify(data));
-
-      const userStaking = await namespaceWrapper.getSubmitterAccount();
-      const { cid } = await client.uploadFile(`${basePath}/${filename}`,userStaking);
-
-      console.log(`Stored file CID: ${cid}`);
-      fs.unlinkSync(`${basePath}/${filename}`);
-
-      return cid;
-    } catch (error) {
-      console.error('Failed to upload file to IPFS:', error);
-      fs.unlinkSync(`${basePath}/${filename}`);
-      throw error;
     }
   }
 

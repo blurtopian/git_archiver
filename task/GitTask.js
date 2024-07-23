@@ -5,8 +5,12 @@ const archiver = require('archiver');
 const simpleGit = require('simple-git');
 const git = simpleGit();
 
-class SimpleClonerTask {
+class GitTask {
   constructor(repo) {
+    this.repo = repo;
+  }
+
+  setRepo(repo) {
     this.repo = repo;
   }
 
@@ -31,6 +35,48 @@ class SimpleClonerTask {
     } finally {
       // Clean up: remove the temporary directory if needed
       // (Implement cleanup logic here if desired)
+    }
+  }
+
+  async storeFile() {
+    const basePath = await namespaceWrapper.getBasePath();
+    const repoName = this.repo.name;
+    const cloneDir = `${basePath}/${repoName}`;
+    const zipPath = `${cloneDir}.zip`;
+    try {
+      const client = new KoiiStorageClient();
+      const userStaking = await namespaceWrapper.getSubmitterAccount();
+      const { cid } = await client.uploadFile(zipPath, userStaking);
+
+      console.log(`Stored file CID: ${cid}`);
+
+      return cid;
+    } catch (error) {
+      console.error('Failed to upload file to IPFS:', error);
+      fs.unlinkSync(`${basePath}/${filename}`);
+      throw error;
+    }
+  }
+
+  async cleanup() {
+    const basePath = await namespaceWrapper.getBasePath();
+    const repoName = this.repo.name;
+    const cloneDir = `${basePath}/${repoName}`;
+    const zipPath = `${cloneDir}.zip`;
+    try {
+      fs.unlinkSync(zipPath);
+      fs.rm(cloneDir, { recursive: true, force: true }, err => {
+        if (err) {
+          console.error(`Error deleting directory: ${err}`);
+        } else {
+          console.log(`Directory ${cloneDir} deleted successfully.`);
+        }
+      });
+
+      return cid;
+    } catch (error) {
+      console.error('Failed to delete file/directory:', error);
+      throw error;
     }
   }
 
@@ -92,24 +138,26 @@ class SimpleClonerTask {
       // (Implement cleanup logic here if desired)
     }
   }
-}
 
-async function retrieveAndValidateFile(cid, filename = 'dealsData.json') {
-  // instantiate the storage client
-  const client = new KoiiStorageClient();
+  async retrieveAndValidateFile(cid) {
+    // instantiate the storage client
+    const client = new KoiiStorageClient();
+    const repoName = this.repo?.name;
+    const filename = `${repoName}.zip`;
 
-  try {
-    // get the uploaded file using the IPFS CID we stored earlier and the filename (in this case, `dealsData.json`)
-    const upload = await client.getFile(cid, filename);
-    // return whether or not the file exists
-    return !!upload;
-  } catch (error) {
-    console.error('Failed to download or validate file from IPFS:', error);
-    throw error;
+    try {
+      // get the uploaded file using the IPFS CID we stored earlier and the filename (in this case, `dealsData.json`)
+      const upload = await client.getFile(cid, filename);
+      // return whether or not the file exists
+      return !!upload;
+    } catch (error) {
+      console.error('Failed to download or validate file from IPFS:', error);
+      throw error;
+    }
   }
 }
 
+const gitTask = new GitTask();
 module.exports = {
-  SimpleClonerTask,
-  retrieveAndValidateFile,
+  gitTask,
 };
