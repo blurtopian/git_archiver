@@ -38,6 +38,26 @@ class GitTask {
     }
   }
 
+  async checkRepoSize() {
+    try {
+        const response = await fetch(GITHUB_API_URL, {
+            headers: {
+                'Authorization': `token YOUR_GITHUB_TOKEN`, // Replace with your GitHub token if needed
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+        const data = await response.json();
+        if (response.status !== 200) {
+            throw new Error(`Failed to fetch repository data: ${data.message}`);
+        }
+
+        return data.size * 1024; // Size is returned in KB, convert to bytes
+    } catch (error) {
+        console.error('Error checking repository size:', error);
+        throw error;
+    }
+}
+
   async storeFile() {
     const basePath = await namespaceWrapper.getBasePath();
     const repoName = this.repo.name;

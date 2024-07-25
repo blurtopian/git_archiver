@@ -1,9 +1,9 @@
 # Name and metadata of your task
 task_name: 'Git Archiver'
 author: 'East'
-description: 'A simple git task that gets the latest commit hash from a specific repo and uploads the hash to IPFS for later retrieval.'
+description: 'A simple git task that gets a random repository, zips it, and upload it to IPFS. Useful for making backup of copies repositories for any unwanted event.'
 repositoryUrl: 'https://github.com/blurtopian/git_archiver' #replace with your own repo url
-imageUrl: 'https://i.ibb.co/rct9M08/output.png'
+imageUrl: 'https://i.ibb.co/N1H5YB4/final-uploaded-image-with-gradient.png'
 # network value can be DEVELOPMENT , ARWEAVE or IPFS, Recommended IPFS when deploying to testnet as the cli automatically takes care of uploading the executable with the help of web3.js key
 task_executable_network: 'IPFS'
 
@@ -24,7 +24,7 @@ minimum_stake_amount: 0.9
 # total bounty is not accepted in case of update task
 total_bounty_amount: 10
 
-bounty_amount_per_round: 0.0001
+bounty_amount_per_round: 0.001
 
 #Number of times allowed to re-submit the distribution  list in case the distribution list is audited
 allowed_failed_distributions: 3
@@ -52,7 +52,7 @@ requirementsTags:
     value: 'GIT_ACCESS_TOKEN'
     description: 'Token to use access github repositories.'
 
-task_id: ' '
+task_id: '7ructXToXscsB6sSdjtN3m9iqj7Sm6GzRfeJ8aA2akTt'
 
 # Provide the description for changes made in new version of task
-migrationDescription: ''
+migrationDescription: 'Added checking for repo size and updated task image.'
